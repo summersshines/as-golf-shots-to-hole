@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shots to Hole — Anthony Summers Golf</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f4f0;color:#222;min-height:100vh}
+.gold-bar{height:5px;background:linear-gradient(90deg,#EF9F27,#f5c76e,#EF9F27)}
+header{background:#1a3a2a;padding:18px 20px 14px;text-align:center}
+.brand{color:#EF9F27;font-family:Georgia,serif;font-size:1.5rem;font-weight:bold;letter-spacing:1px}
+.tagline{color:#a8c4b0;font-size:.8rem;margin-top:3px}
+.controls{background:#fff;padding:14px 16px;border-bottom:2px solid #e0e0d8;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+.ctrl-group{display:flex;align-items:center;gap:8px}
+.ctrl-group label{font-size:.8rem;font-weight:bold;color:#1a3a2a;text-transform:uppercase;letter-spacing:.5px}
+select{padding:7px 12px;border:2px solid #0F6E56;border-radius:6px;font-size:.9rem;background:#fff;color:#1a3a2a;cursor:pointer}
+.tabs{background:#0F6E56;display:flex;overflow-x:auto}
+.tab{padding:11px 18px;color:#a8c4b0;font-size:.85rem;font-weight:bold;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:#EF9F27;border-bottom-color:#EF9F27;background:rgba(0,0,0,.15)}
+.tab:hover:not(.active){color:#fff}
+.sub-tabs{background:#0a5240;display:flex;padding:0 12px}
+.sub-tab{padding:8px 16px;color:#a8c4b0;font-size:.8rem;cursor:pointer;border-bottom:2px solid transparent}
+.sub-tab.active{color:#EF9F27;border-bottom-color:#EF9F27}
+.content{padding:16px;max-width:900px;margin:0 auto}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border-radius:10px;padding:12px 10px;text-align:center;border:1px solid #e0e0d8;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.kpi-label{font-size:.68rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.kpi-val{font-size:1.6rem;font-weight:bold;color:#1a3a2a;font-family:Georgia,serif}
+.kpi-next{font-size:.72rem;color:#0F6E56;margin-top:3px;font-weight:bold}
+.kpi-unit{font-size:.72rem;color:#888;margin-top:2px}
+.benchmark-strip{background:#1a3a2a;border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.bench-title{color:#EF9F27;font-size:.75rem;font-weight:bold;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;text-align:center}
+.bench-table{width:100%;border-collapse:collapse}
+.bench-table th{color:#a8c4b0;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;padding:4px 8px;text-align:center}
+.bench-table th:first-child{text-align:left}
+.bench-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);font-size:.82rem}
+.bench-table tr:last-child td{border-bottom:none}
+.bench-table td:first-child{color:#8aada0}
+.bench-table td.avg{color:#EF9F27;font-weight:bold;text-align:center}
+.bench-table td.win{color:#fff;font-weight:bold;text-align:center}
+.insight{background:#fffbf0;border-left:4px solid #EF9F27;border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:16px;font-size:.88rem;color:#444;line-height:1.5}
+.insight strong{color:#1a3a2a}
+.insight .next-grp{color:#0F6E56;font-weight:bold}
+.chart-wrap{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid #e0e0d8}
+.chart-title{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:bold}
+.chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:.75rem;color:#555}
+.leg-swatch{width:14px;height:10px;border-radius:2px;flex-shrink:0}
+.bar-chart{display:flex;flex-direction:column;gap:5px}
+.bar-row{display:flex;align-items:center;gap:8px}
+.bar-label{font-size:.72rem;color:#666;width:58px;text-align:right;flex-shrink:0}
+.bar-outer{flex:1;background:#e8e8e0;border-radius:4px;height:22px;overflow:hidden;position:relative}
+.bar-inner{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;min-width:4px;transition:width .3s}
+.bar-inner span{font-size:.7rem;color:#fff;font-weight:bold;white-space:nowrap}
+.bar-row.selected .bar-label{font-weight:bold;color:#1a3a2a}
+.bar-row.nextup .bar-label{color:#0F6E56;font-style:italic}
+.putt-bands{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid #e0e0d8}
+.putt-band-title{font-size:.8rem;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:bold}
+.band-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0e8}
+.band-row:last-child{border-bottom:none}
+.band-dist{font-size:.82rem;color:#444;width:65px;flex-shrink:0}
+.band-val{font-size:.92rem;font-weight:bold;width:58px;text-align:center;flex-shrink:0}
+.band-bar-wrap{flex:1;margin:0 8px;background:#e8e8e0;border-radius:4px;height:14px;position:relative}
+.band-bar{height:100%;border-radius:4px;position:absolute;top:0}
+.pos-bar{left:50%}
+.neg-bar{right:50%}
+.zero-line{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#aaa}
+.band-next{font-size:.72rem;color:#0F6E56;width:52px;text-align:center;flex-shrink:0}
+.band-as{font-size:.72rem;color:#EF9F27;width:48px;text-align:right;flex-shrink:0}
+.line-chart-wrap{background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;border:1px solid #e0e0d8}
+.cta{background:#0F6E56;border-radius:10px;padding:16px;text-align:center;margin-bottom:16px}
+.cta-main{color:#EF9F27;font-family:Georgia,serif;font-size:1.1rem;font-style:italic;margin-bottom:8px}
+.cta-detail{color:#fff;font-size:.8rem;line-height:1.7}
+.cta-detail a{color:#EF9F27;text-decoration:none}
+footer{background:#0F6E56;padding:12px 16px;text-align:center;color:#a8c4b0;font-size:.72rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="gold-bar"></div>
+<header>
+  <div class="brand">Anthony Summers Golf</div>
+  <div class="tagline">Shots to Hole — Performance Benchmarks</div>
+</header>
+<div class="controls">
+  <div class="ctrl-group">
+    <label>View by</label>
+    <select id="viewBy" onchange="onViewChange()">
+      <option value="score">Score Range</option>
+      <option value="hcp">Handicap</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <label>Group</label>
+    <select id="groupSel" onchange="updateAll()"></select>
+  </div>
+</div>
+<div class="tabs" id="mainTabs">
+  <div class="tab active" data-tab="scoring" onclick="showTab('scoring')">Scoring</div>
+  <div class="tab" data-tab="ballstrike" onclick="showTab('ballstrike')">Ball Striking</div>
+  <div class="tab" data-tab="shortgame" onclick="showTab('shortgame')">Short Game</div>
+  <div class="tab" data-tab="putting" onclick="showTab('putting')">Putting</div>
+</div>
+<div id="subTabBar" style="display:none" class="sub-tabs">
+  <div class="sub-tab active" data-sub="putt-main" onclick="showSubTab('putt-main')">Overview</div>
+  <div class="sub-tab" data-sub="putt-crossover" onclick="showSubTab('putt-crossover')">Crossover Chart</div>
+</div>
+<div class="content" id="mainContent"></div>
+<div class="content" style="padding-top:0">
+  <div class="cta">
+    <div class="cta-main">Your short game is where your handicap is hiding.</div>
+    <div class="cta-detail">Score Better program — ask for details<br>
+      <a href="tel:0409517867">0409 517 867</a> &nbsp;·&nbsp; <a href="mailto:summersshines@gmail.com">summersshines@gmail.com</a>
+    </div>
+  </div>
+</div>
+<footer>PGA Golf Coach &nbsp;·&nbsp; 2014 Qld PGA Champion &nbsp;·&nbsp; 2020 Victorian Senior PGA Champion &nbsp;·&nbsp; 2012 US Open &nbsp;·&nbsp; Golf NSW High Performance Program</footer>
+
+<script>
+var scoreLabels = ['69–70','71–73','74–76','77–79','80–84','85–89','90–99'];
+var hcpLabels   = ['+1–1','2–4','5–9','10–14','15–19','20–24','25–29'];
+var putBands    = ['0–3ft','3–5ft','5–9ft','9–15ft','15–25ft','25–40ft','40ft+'];
+
+var scoreData = {
+  score:    [69.6,72,74.9,77.9,81.6,86.6,93],
+  putts:    [29.3,30.2,31.1,31.9,32.6,33.5,34.7],
+  penalties:[0.3,0.5,0.7,1,1.5,2,2.6],
+  gir:      [12.9,11.9,10.6,9.3,7.7,5.7,3.8],
+  gir15:    [6.2,5.4,4.6,3.9,3.1,2.2,1.4],
+  updown:   [49,44,38,33,28,23,18],
+  scrambles:[61,52,43,35,28,20,12],
+  sand:     [51,43,36,30,24,19,13],
+  puttGIR:  [1.76,1.83,1.90,1.96,2.03,2.11,2.22],
+  puttNoGIR:[1.31,1.39,1.48,1.57,1.65,1.74,1.85],
+  firstPutt:[7.7,8.5,9.5,10.4,11.5,12.6,14.1],
+  drive:    [259,253,246,237,229,211,188],
+  wasted:   [0.8,1.1,1.5,2,2.5,3.1,3.7],
+  birdies:  [4.2,3.2,2.3,1.7,1.1,0.6,0.3],
+  bogeys:   [2.2,3.1,4.3,5.3,6.5,7.5,7.6],
+  doubles:  [0.2,0.4,0.7,1.2,2.1,3.6,5.9],
+  p03:[99,98,98,97,97,97,96],p35:[81,77,72,69,66,71,63],
+  p59:[54,48,42,37,33,38,30],p915:[28,22,18,14,11,14,7],
+  p1525:[11,7,3,-1,-5,-2,-9],p2540:[-1,-6,-11,-17,-22,-18,-28],
+  p40:[-15,-21,-28,-34,-40,-35,-47]
+};
+var hcpData = {
+  score:    [73.6,76.4,79.8,84.7,89.4,91.9,98.3],
+  putts:    [30.6,31.2,31.7,32.7,34,34,35.3],
+  penalties:[0.7,0.8,0.9,1.4,1.5,1.9,1.9],
+  gir:      [11.3,9.7,7.8,5.9,4.3,3.7,2.1],
+  gir15:    [5.1,4.4,3.4,2.4,1.7,1.6,0.9],
+  updown:   [40,35,31,25,20,18,13],
+  scrambles:[46,39,32,23,16,13,8],
+  sand:     [39,33,28,20,16,15,14],
+  puttGIR:  [1.84,1.91,1.97,2.06,2.12,2.10,2.19],
+  puttNoGIR:[1.46,1.54,1.61,1.70,1.81,1.84,1.93],
+  firstPutt:[9.4,10,11.1,12.4,13.9,13.8,14.8],
+  drive:    [250,238,222,200,191,179,177],
+  wasted:   [1.4,1.8,1.8,2.4,2.6,3,2.3],
+  birdies:  [3,2.1,1.4,0.8,0.5,0.5,0.2],
+  bogeys:   [3.6,4.8,6.1,7.2,7.6,7.3,6.5],
+  doubles:  [0.8,1.1,1.7,3.1,4.9,5.9,8.6],
+  p03:[98,98,97,96,95,95,92],p35:[74,73,71,69,65,59,58],
+  p59:[45,40,38,35,29,27,26],p915:[21,16,14,10,6,1,-1],
+  p1525:[6,1,-2,-7,-12,-14,-21],p2540:[-8,-15,-18,-23,-30,-36,-43],
+  p40:[-24,-30,-35,-43,-53,-52,-64]
+};
+var asAvg = {score:71.2,putts:30.4,penalties:0.3,gir:12.7,gir15:6,updown:46,scrambles:56,sand:48,puttGIR:1.81,puttNoGIR:1.38,firstPutt:7.5,drive:248,wasted:0.7,birdies:3.3,bogeys:2.7,doubles:0.3,p03:99,p35:73,p59:44,p915:22,p1525:7,p2540:-4,p40:-25};
+var asWin  = {score:64,putts:28,penalties:0,gir:15.5,gir15:11.3,updown:50,scrambles:80,sand:75,puttGIR:1.63,puttNoGIR:1.10,firstPutt:6.7,drive:260,wasted:0.5,birdies:6.3,bogeys:0.8,doubles:0,p03:100,p35:83,p59:53,p915:19,p1525:11,p2540:0,p40:0};
+
+var currentTab='scoring', currentSubTab='putt-main';
+
+function getLabels(){ return document.getElementById('viewBy').value==='score'?scoreLabels:hcpLabels; }
+function getData(){   return document.getElementById('viewBy').value==='score'?scoreData:hcpData; }
+function getIdx(){    var v=parseInt(document.getElementById('groupSel').value,10); return isNaN(v)?0:v; }
+function fmt(v,dp){   return (typeof v==='number'&&!isNaN(v))?v.toFixed(dp):'—'; }
+// next group = one index lower (better) — index 0 has no next group up
+function nextIdx(i){ return i>0?i-1:null; }
+
+function populateGroups(){
+  var sel=document.getElementById('groupSel'), cur=sel.value, labels=getLabels();
+  sel.innerHTML=labels.map(function(l,i){return '<option value="'+i+'">'+l+'</option>';}).join('');
+  var ci=parseInt(cur,10);
+  sel.value=(!isNaN(ci)&&ci<labels.length)?ci:0;
+}
+function onViewChange(){ populateGroups(); updateAll(); }
+function showTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===tab);});
+  var sb=document.getElementById('subTabBar');
+  sb.style.display=(tab==='putting')?'flex':'none';
+  currentSubTab='putt-main';
+  document.querySelectorAll('.sub-tab').forEach(function(t){t.classList.toggle('active',t.dataset.sub==='putt-main');});
+  updateAll();
+}
+function showSubTab(sub){
+  currentSubTab=sub;
+  document.querySelectorAll('.sub-tab').forEach(function(t){t.classList.toggle('active',t.dataset.sub===sub);});
+  updateAll();
+}
+
+// ── UI COMPONENTS ─────────────────────────────────────────────────────────────
+function kpi(label,val,nextVal,unit,lowerIsBetter){
+  var arrow='', diff='', nv=parseFloat(nextVal);
+  if(nextVal!==null && !isNaN(nv)){
+    var cur=parseFloat(val);
+    var better = lowerIsBetter ? (nv<cur) : (nv>cur);
+    diff = lowerIsBetter
+      ? (nv<cur ? '▲ Next group: '+nextVal : '— Next: '+nextVal)
+      : (nv>cur ? '▲ Next group: '+nextVal : '— Next: '+nextVal);
+  }
+  return '<div class="kpi">'
+    +'<div class="kpi-label">'+label+'</div>'
+    +'<div class="kpi-val">'+val+'</div>'
+    +(diff?'<div class="kpi-next">'+diff+'</div>':'')
+    +(unit?'<div class="kpi-unit">'+unit+'</div>':'')
+    +'</div>';
+}
+
+function benchTable(metrics){
+  var rows=metrics.map(function(m){
+    return '<tr><td>'+m[0]+'</td><td class="avg">'+asAvg[m[1]]+'</td><td class="win">'+asWin[m[1]]+'</td></tr>';
+  }).join('');
+  return '<div class="benchmark-strip"><div class="bench-title">Anthony Summers — Professional Benchmark</div>'
+    +'<table class="bench-table"><thead><tr><th>Metric</th><th>AS Tour Avg</th><th>AS Tour Win</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>';
+}
+
+function insightBox(txt){
+  return '<div class="insight">'+txt+'<br><br><strong>Your short game is where your handicap is hiding.</strong></div>';
+}
+
+// All-groups bar chart — selected highlighted green, next group teal, others grey
+function allGroupsBar(title, labels, values, selIdx, suffix, asVal){
+  var ni=nextIdx(selIdx);
+  var maxV=Math.max.apply(null, values.concat(asVal!=null?[asVal]:[]));
+  if(maxV<=0) maxV=1;
+  var rows=labels.map(function(l,j){
+    var pct=Math.max(values[j]/maxV*100,1).toFixed(1);
+    var isSel=j===selIdx, isNext=j===ni;
+    var bg=isSel?'#0F6E56':(isNext?'#1a8c6a':'#b0c8bb');
+    return '<div class="bar-row'+(isSel?' selected':'')+(isNext?' nextup':'')+'">'
+      +'<div class="bar-label">'+l+'</div>'
+      +'<div class="bar-outer"><div class="bar-inner" style="width:'+pct+'%;background:'+bg+'">'
+      +'<span>'+values[j]+(suffix||'')+'</span></div></div></div>';
+  }).join('');
+  if(asVal!=null){
+    var asPct=Math.max(asVal/maxV*100,1).toFixed(1);
+    rows+='<div class="bar-row"><div class="bar-label" style="color:#EF9F27;font-size:.68rem">AS Tour</div>'
+      +'<div class="bar-outer"><div class="bar-inner" style="width:'+asPct+'%;background:#1a3a2a;border:1px solid #EF9F27">'
+      +'<span style="color:#EF9F27">'+asVal+(suffix||'')+'</span></div></div></div>';
+  }
+  var legend='<div class="chart-legend">'
+    +'<div class="leg-item"><div class="leg-swatch" style="background:#0F6E56"></div>Selected group</div>'
+    +(ni!==null?'<div class="leg-item"><div class="leg-swatch" style="background:#1a8c6a"></div>Next group up</div>':'')
+    +(asVal!=null?'<div class="leg-item"><div class="leg-swatch" style="background:#1a3a2a;border:1px solid #EF9F27"></div>AS Tour avg</div>':'')
+    +'</div>';
+  return '<div class="chart-wrap"><div class="chart-title">'+title+'</div>'+legend+'<div class="bar-chart">'+rows+'</div></div>';
+}
+
+// Multi-metric short game chart — grouped bars per group
+function shortGameMultiBar(labels, d, selIdx){
+  var ni=nextIdx(selIdx);
+  var metrics=[
+    {key:'updown', label:'Up & Down %', max:Math.max.apply(null,labels.map(function(_,j){return d.updown[j];})), asVal:asAvg.updown},
+    {key:'scrambles',label:'Scrambling %', max:Math.max.apply(null,labels.map(function(_,j){return d.scrambles[j];})), asVal:asAvg.scrambles},
+    {key:'sand',   label:'Sand Saves %', max:Math.max.apply(null,labels.map(function(_,j){return d.sand[j];})),     asVal:asAvg.sand}
+  ];
+  var html='<div class="chart-wrap"><div class="chart-title">Short Game — All Metrics Across All Groups</div>'
+    +'<div class="chart-legend">'
+    +'<div class="leg-item"><div class="leg-swatch" style="background:#0F6E56"></div>Selected</div>'
+    +(ni!==null?'<div class="leg-item"><div class="leg-swatch" style="background:#1a8c6a"></div>Next group up</div>':'')
+    +'<div class="leg-item"><div class="leg-swatch" style="background:#1a3a2a;border:1px solid #EF9F27"></div>AS Tour avg</div>'
+    +'</div>';
+  metrics.forEach(function(m){
+    html+='<div style="margin-bottom:14px"><div style="font-size:.75rem;font-weight:bold;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">'+m.label+'</div>';
+    html+='<div class="bar-chart">';
+    var maxV=Math.max(m.max, m.asVal);
+    labels.forEach(function(l,j){
+      var val=d[m.key][j];
+      var pct=Math.max(val/maxV*100,1).toFixed(1);
+      var isSel=j===selIdx, isNext=j===ni;
+      var bg=isSel?'#0F6E56':(isNext?'#1a8c6a':'#b0c8bb');
+      html+='<div class="bar-row'+(isSel?' selected':'')+(isNext?' nextup':'')+'">'
+        +'<div class="bar-label">'+l+'</div>'
+        +'<div class="bar-outer"><div class="bar-inner" style="width:'+pct+'%;background:'+bg+'">'
+        +'<span>'+val+'%</span></div></div></div>';
+    });
+    var asPct=Math.max(m.asVal/maxV*100,1).toFixed(1);
+    html+='<div class="bar-row"><div class="bar-label" style="color:#EF9F27;font-size:.68rem">AS Tour</div>'
+      +'<div class="bar-outer"><div class="bar-inner" style="width:'+asPct+'%;background:#1a3a2a;border:1px solid #EF9F27">'
+      +'<span style="color:#EF9F27">'+m.asVal+'%</span></div></div></div>';
+    html+='</div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function puttBandsHtml(d,i,labels){
+  var ni=nextIdx(i);
+  var keys=['p03','p35','p59','p915','p1525','p2540','p40'];
+  var maxAbs=0;
+  keys.forEach(function(k){ maxAbs=Math.max(maxAbs,Math.abs(d[k][i]),Math.abs(asAvg[k])); });
+  if(ni!==null) keys.forEach(function(k){ maxAbs=Math.max(maxAbs,Math.abs(d[k][ni])); });
+  if(maxAbs<1) maxAbs=1;
+  var rows=keys.map(function(k,bi){
+    var val=d[k][i];
+    var asVal=asAvg[k];
+    var nextVal=ni!==null?d[k][ni]:null;
+    var pct=Math.min(Math.abs(val)/maxAbs*45,45);
+    var col=val>0?'#0F6E56':'#c0392b';
+    var barStyle=val>=0
+      ?'class="band-bar pos-bar" style="width:'+pct+'%;background:'+col+';left:50%"'
+      :'class="band-bar neg-bar" style="width:'+pct+'%;background:'+col+';right:50%"';
+    var sign=val>0?'+':'', asSign=asAvg[k]>0?'+':'';
+    var nextStr=nextVal!==null?(nextVal>0?'+':'')+nextVal+'%':'—';
+    return '<div class="band-row">'
+      +'<div class="band-dist">'+putBands[bi]+'</div>'
+      +'<div class="band-val" style="color:'+col+'">'+sign+val+'%</div>'
+      +'<div class="band-bar-wrap"><div '+barStyle+'></div><div class="zero-line"></div></div>'
+      +'<div class="band-next">'+nextStr+'</div>'
+      +'<div class="band-as">'+asSign+asVal+'%</div>'
+      +'</div>';
+  }).join('');
+  var nextLbl=ni!==null?labels[ni]:'—';
+  return '<div class="putt-bands"><div class="putt-band-title">Make / 3-Putt Balance by Distance'
+    +'<span style="font-weight:normal;color:#888;font-size:.68rem;margin-left:8px">Next group: <span style="color:#0F6E56">'+nextLbl+'</span> &nbsp;|&nbsp; AS Tour avg</span></div>'
+    +'<div class="band-row" style="border-bottom:2px solid #ddd;padding-bottom:4px;margin-bottom:2px">'
+    +'<div class="band-dist" style="font-size:.68rem;color:#888">Distance</div>'
+    +'<div class="band-val" style="font-size:.68rem;color:#888">Net %</div>'
+    +'<div style="flex:1;margin:0 8px;text-align:center;font-size:.68rem;color:#888">← 3-putts | makes →</div>'
+    +'<div class="band-next" style="font-size:.68rem;color:#0F6E56">Next</div>'
+    +'<div class="band-as" style="font-size:.68rem;color:#EF9F27">AS avg</div>'
+    +'</div>'+rows+'</div>';
+}
+
+function crossoverBand(d,i){
+  var keys=['p03','p35','p59','p915','p1525','p2540','p40'];
+  for(var b=0;b<keys.length;b++){ if(d[keys[b]][i]<=0) return putBands[b]; }
+  return 'beyond 40ft';
+}
+
+// ── SVG HELPERS ───────────────────────────────────────────────────────────────
+function svgLine(pts,xArr,yFn,col,dash,sw){
+  var d=pts.map(function(v,j){return (j?'L':'M')+xArr[j].toFixed(1)+','+yFn(v).toFixed(1);}).join(' ');
+  return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="'+(sw||2)+'" '+(dash?'stroke-dasharray="'+dash+'"':'')+'/>';
+}
+function svgDots(pts,xArr,yFn,col,r){
+  return pts.map(function(v,j){
+    return '<circle cx="'+xArr[j].toFixed(1)+'" cy="'+yFn(v).toFixed(1)+'" r="'+(r||4)+'" fill="'+col+'"/>';
+  }).join('');
+}
+
+function heatColor(val){
+  // Green (makes) through amber to red (3-putts)
+  // Scale: +100 = deep green, 0 = amber, -70 = deep red
+  if(val>=80)  return {bg:'#1a6b3a',text:'#fff'};
+  if(val>=60)  return {bg:'#2e8b57',text:'#fff'};
+  if(val>=40)  return {bg:'#4aad6f',text:'#fff'};
+  if(val>=20)  return {bg:'#7cc490',text:'#1a3a2a'};
+  if(val>=5)   return {bg:'#b8dfc4',text:'#1a3a2a'};
+  if(val>=0)   return {bg:'#dff0e4',text:'#1a3a2a'};
+  if(val>=-10) return {bg:'#fde8cc',text:'#5a2d00'};
+  if(val>=-20) return {bg:'#f9c784',text:'#5a2d00'};
+  if(val>=-35) return {bg:'#f0964a',text:'#fff'};
+  if(val>=-50) return {bg:'#d95f2b',text:'#fff'};
+  return               {bg:'#b03010',text:'#fff'};
+}
+
+function puttHeatMap(d,i,labels){
+  var keys=['p03','p35','p59','p915','p1525','p2540','p40'];
+  var ni=nextIdx(i);
+
+  // Build column headers: all groups + AS Tour avg
+  var cols=labels.concat(['AS Tour']);
+  var colData=labels.map(function(_,gi){return keys.map(function(k){return d[k][gi];});});
+  colData.push(keys.map(function(k){return asAvg[k];}));
+
+  var html='<div class="chart-wrap" style="overflow-x:auto">'
+    +'<div class="chart-title">Make / 3-Putt Balance — Heat Map</div>'
+    +'<div style="font-size:.72rem;color:#888;margin-bottom:10px">'
+    +'<span style="display:inline-block;width:12px;height:12px;background:#2e8b57;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Green = net makes &nbsp;'
+    +'<span style="display:inline-block;width:12px;height:12px;background:#f0964a;border-radius:2px;vertical-align:middle;margin-right:4px"></span>Amber/Red = net 3-putts'
+    +'</div>'
+    +'<table style="border-collapse:collapse;width:100%;min-width:380px;font-size:.75rem">'
+    +'<thead><tr>'
+    +'<th style="text-align:left;padding:5px 6px;color:#666;font-weight:bold;font-size:.68rem;white-space:nowrap;border-bottom:2px solid #ddd">Distance</th>';
+
+  cols.forEach(function(l,ci){
+    var isSel=ci===i, isNext=ci===ni, isAS=ci===cols.length-1;
+    var style='padding:5px 4px;text-align:center;font-size:.68rem;border-bottom:2px solid #ddd;white-space:nowrap;';
+    if(isSel) style+='color:#0F6E56;font-weight:bold;border-bottom:2px solid #0F6E56;';
+    else if(isNext) style+='color:#1a8c6a;font-weight:bold;';
+    else if(isAS) style+='color:#EF9F27;font-weight:bold;';
+    else style+='color:#666;';
+    html+='<th style="'+style+'">'+l+'</th>';
+  });
+  html+='</tr></thead><tbody>';
+
+  keys.forEach(function(k,bi){
+    html+='<tr>'
+      +'<td style="padding:5px 6px;font-size:.75rem;font-weight:bold;color:#444;white-space:nowrap;border-bottom:1px solid #f0f0e8">'+putBands[bi]+'</td>';
+    colData.forEach(function(colVals,ci){
+      var val=colVals[bi];
+      var c=heatColor(val);
+      var isSel=ci===i;
+      var sign=val>0?'+':'';
+      var border=isSel?'border-left:2px solid #0F6E56;border-right:2px solid #0F6E56;':'';
+      html+='<td style="padding:5px 4px;text-align:center;background:'+c.bg+';color:'+c.text+';font-weight:'+(isSel?'bold':'normal')+';border-bottom:1px solid rgba(255,255,255,.3);'+border+'">'+sign+val+'%</td>';
+    });
+    html+='</tr>';
+  });
+
+  // Bottom border for selected column
+  html+='<tr><td style="padding:2px"></td>';
+  cols.forEach(function(_,ci){
+    html+='<td style="padding:2px;'+(ci===i?'border-top:2px solid #0F6E56':'')+'"></td>';
+  });
+  html+='</tr>';
+
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function crossoverChartSVG(d,i,labels){
+  var keys=['p35','p59','p915','p1525','p2540','p40'];
+  var bands=['3–5ft','5–9ft','9–15ft','15–25ft','25–40ft','40ft+'];
+  var lineColors=['#2ecc71','#3498db','#9b59b6','#e67e22','#e74c3c','#1abc9c','#f39c12'];
+  var w=560,h=310,pt=20,pr=20,pb=95,pl=50;
+  var cw=w-pl-pr,ch=h-pt-pb;
+  var allVals=[];
+  labels.forEach(function(_,gi){keys.forEach(function(k){allVals.push(d[k][gi]);});});
+  keys.forEach(function(k){allVals.push(asAvg[k]);allVals.push(asWin[k]);});
+  var minV=Math.min.apply(null,allVals)-5,maxV=Math.max.apply(null,allVals)+5;
+  var xArr=keys.map(function(_,j){return pl+j*(cw/(keys.length-1));});
+  function yFn(v){return pt+ch-(v-minV)/(maxV-minV)*ch;}
+  var step=10,base=Math.ceil(minV/step)*step,gridVals=[];
+  for(var gv=base;gv<=maxV;gv+=step) gridVals.push(gv);
+  var grid=gridVals.map(function(v){
+    return '<line x1="'+pl+'" x2="'+(w-pr)+'" y1="'+yFn(v).toFixed(1)+'" y2="'+yFn(v).toFixed(1)+'" stroke="'+(v===0?'#555':'#e8e8e0')+'" stroke-width="'+(v===0?2:1)+'"/>'
+      +'<text x="'+(pl-5)+'" y="'+(yFn(v)+4).toFixed(1)+'" text-anchor="end" font-size="9" fill="#888">'+v+'%</text>';
+  }).join('');
+  var xLbls=bands.map(function(l,j){
+    return '<text x="'+xArr[j].toFixed(1)+'" y="'+(pt+ch+15)+'" text-anchor="middle" font-size="9" fill="#666">'+l+'</text>';
+  }).join('');
+  function findCx(vals){
+    for(var j=0;j<vals.length-1;j++){
+      if(vals[j]>=0&&vals[j+1]<0){var t=vals[j]/(vals[j]-vals[j+1]);return xArr[j]+t*(xArr[j+1]-xArr[j]);}
+    }
+    return null;
+  }
+  var lines=labels.map(function(l,gi){
+    var vals=keys.map(function(k){return d[k][gi];});
+    var col=lineColors[gi%lineColors.length];
+    var sel=gi===i;
+    var cx=findCx(vals);
+    return svgLine(vals,xArr,yFn,col,'',sel?3:1.5)
+      +(cx!==null?'<circle cx="'+cx.toFixed(1)+'" cy="'+yFn(0).toFixed(1)+'" r="'+(sel?6:3)+'" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>':'');
+  }).join('');
+  var asAvgVals=keys.map(function(k){return asAvg[k];}),asWinVals=keys.map(function(k){return asWin[k];});
+  var asCx=findCx(asAvgVals),asWCx=findCx(asWinVals);
+  var asLines=svgLine(asAvgVals,xArr,yFn,'#EF9F27','6,3',2.5)+svgLine(asWinVals,xArr,yFn,'#bbb','3,2',1.5)
+    +(asCx!==null?'<circle cx="'+asCx.toFixed(1)+'" cy="'+yFn(0).toFixed(1)+'" r="5" fill="#EF9F27" stroke="#fff" stroke-width="1.5"/>':'')
+    +(asWCx!==null?'<circle cx="'+asWCx.toFixed(1)+'" cy="'+yFn(0).toFixed(1)+'" r="4" fill="#bbb" stroke="#fff" stroke-width="1.5"/>':'');
+  var legStartY=pt+ch+30;
+  var legend=labels.map(function(l,gi){
+    var col=lineColors[gi%lineColors.length],sel=gi===i;
+    var lx=pl+(gi%4)*130,ly=legStartY+Math.floor(gi/4)*14;
+    return '<circle cx="'+(lx+4)+'" cy="'+(ly-4)+'" r="4" fill="'+col+'"/>'
+      +'<text x="'+(lx+12)+'" y="'+ly+'" font-size="9" fill="'+(sel?col:'#777')+'" font-weight="'+(sel?'bold':'normal')+'">'+l+'</text>';
+  }).join('');
+  var asLegY=legStartY+(Math.ceil(labels.length/4))*14+6;
+  var asLeg='<line x1="'+pl+'" x2="'+(pl+16)+'" y1="'+(asLegY-4)+'" y2="'+(asLegY-4)+'" stroke="#EF9F27" stroke-width="2.5" stroke-dasharray="6,3"/>'
+    +'<text x="'+(pl+20)+'" y="'+asLegY+'" font-size="9" fill="#EF9F27">AS Tour avg</text>'
+    +'<line x1="'+(pl+100)+'" x2="'+(pl+116)+'" y1="'+(asLegY-4)+'" y2="'+(asLegY-4)+'" stroke="#bbb" stroke-width="1.5" stroke-dasharray="3,2"/>'
+    +'<text x="'+(pl+120)+'" y="'+asLegY+'" font-size="9" fill="#999">AS Tour win</text>';
+  var svg='<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:'+w+'px">'
+    +grid+lines+asLines+xLbls+legend+asLeg+'</svg>';
+  return '<div class="line-chart-wrap"><div class="chart-title">3-Putt Crossover — All Groups (from 3ft+)</div>'+svg+'</div>';
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function updateAll(){
+  var d=getData(),i=getIdx(),labels=getLabels();
+  if(i<0||i>=labels.length) i=0;
+  var ni=nextIdx(i);
+  var lbl=labels[i],nextLbl=ni!==null?labels[ni]:null;
+  var html='';
+
+  if(currentTab==='scoring'){
+    html+='<div class="kpi-grid">'
+      +kpi('Score Average',      fmt(d.score[i],1),    ni!==null?fmt(d.score[ni],1):null,    null, true)
+      +kpi('Birdies',            fmt(d.birdies[i],1),  ni!==null?fmt(d.birdies[ni],1):null,  'per round', false)
+      +kpi('Bogeys',             fmt(d.bogeys[i],1),   ni!==null?fmt(d.bogeys[ni],1):null,   'per round', true)
+      +kpi('Doubles+',           fmt(d.doubles[i],1),  ni!==null?fmt(d.doubles[ni],1):null,  'per round', true)
+      +kpi('Wasted Shots',       fmt(d.wasted[i],1),   ni!==null?fmt(d.wasted[ni],1):null,   'per round', true)
+      +'</div>';
+    html+=benchTable([['Score Avg','score'],['Birdies','birdies'],['Bogeys','bogeys'],['Doubles+','doubles'],['Wasted Shots','wasted']]);
+    var diff=(d.score[i]-asAvg.score).toFixed(1);
+    var nextMsg=nextLbl?'The <span class="next-grp">'+nextLbl+'</span> group averages <strong>'+fmt(d.score[ni],1)+'</strong> — a <strong>'+(d.score[i]-d.score[ni]).toFixed(1)+'-shot</strong> gap that comes mainly from fewer doubles and wasted shots.':'This is already the top group in this dataset.';
+    html+=insightBox('The <strong>'+lbl+'</strong> group averages <strong>'+fmt(d.score[i],1)+'</strong> — <strong>'+diff+' shots</strong> behind the AS Tour average. '+nextMsg);
+    html+=allGroupsBar('Score Average — All Groups',labels,d.score,i,'',null);
+    html+=allGroupsBar('Doubles+ per Round — All Groups',labels,d.doubles,i,'',null);
+  }
+
+  if(currentTab==='ballstrike'){
+    html+='<div class="kpi-grid">'
+      +kpi('GIR',           fmt(d.gir[i],1),      ni!==null?fmt(d.gir[ni],1):null,      'per round',   false)
+      +kpi('GIR < 15ft',    fmt(d.gir15[i],1),    ni!==null?fmt(d.gir15[ni],1):null,    'per round',   false)
+      +kpi('Drive Distance',d.drive[i]+'m',        ni!==null?d.drive[ni]+'m':null,       'carry avg',   false)
+      +'</div>';
+    html+=benchTable([['GIR','gir'],['GIR < 15ft','gir15'],['Drive Distance','drive']]);
+    var girDiff=(asAvg.gir-d.gir[i]).toFixed(1);
+    var nextMsg2=nextLbl?'The <span class="next-grp">'+nextLbl+'</span> group hits <strong>'+fmt(d.gir[ni],1)+' GIR</strong> per round — <strong>'+(d.gir[ni]-d.gir[i]).toFixed(1)+' more greens</strong> and drives <strong>'+d.drive[ni]+'m</strong>.':'Already the top group in this dataset.';
+    html+=insightBox('The <strong>'+lbl+'</strong> group hits <strong>'+fmt(d.gir[i],1)+' greens per round</strong> — <strong>'+girDiff+' fewer</strong> than the AS Tour average, meaning more scrambling chances every round. '+nextMsg2);
+    html+=allGroupsBar('Greens in Regulation — All Groups',labels,d.gir,i,'',asAvg.gir);
+    html+=allGroupsBar('Drive Distance — All Groups',labels,d.drive,i,'m',asAvg.drive);
+  }
+
+  if(currentTab==='shortgame'){
+    html+='<div class="kpi-grid">'
+      +kpi('Up & Down < 100m', d.updown[i]+'%',   ni!==null?d.updown[ni]+'%':null,   null, false)
+      +kpi('Scrambling',       d.scrambles[i]+'%', ni!==null?d.scrambles[ni]+'%':null, null, false)
+      +kpi('Sand Saves',       d.sand[i]+'%',      ni!==null?d.sand[ni]+'%':null,      null, false)
+      +kpi('1st Putt (non-GIR)',d.firstPutt[i]+'ft',ni!==null?d.firstPutt[ni]+'ft':null,'chip quality',true)
+      +'</div>';
+    html+=benchTable([['Up & Down','updown'],['Scrambling','scrambles'],['Sand Saves','sand'],['1st Putt dist','firstPutt']]);
+    var scrDiff=(asAvg.scrambles-d.scrambles[i]).toFixed(0);
+    var nextMsg3=nextLbl?'The <span class="next-grp">'+nextLbl+'</span> group scrambles at <strong>'+d.scrambles[ni]+'%</strong>, converts <strong>'+d.updown[ni]+'%</strong> of up & downs, and leaves chips <strong>'+d.firstPutt[ni]+'ft</strong> away.':'Already the top group in this dataset.';
+    html+=insightBox('Scrambling for <strong>'+lbl+'</strong> is <strong>'+d.scrambles[i]+'%</strong> — <strong>'+scrDiff+'pts</strong> behind the AS Tour. The average chip lands <strong>'+d.firstPutt[i]+'ft</strong> from the hole. Every foot closer multiplies across every non-GIR hole. '+nextMsg3);
+    html+=shortGameMultiBar(labels,d,i);
+  }
+
+  if(currentTab==='putting'){
+    if(currentSubTab==='putt-main'){
+      html+='<div class="kpi-grid">'
+        +kpi('Putts on GIR',    fmt(d.puttGIR[i],2),    ni!==null?fmt(d.puttGIR[ni],2):null,    'avg/GIR hole',     true)
+        +kpi('Putts non-GIR',   fmt(d.puttNoGIR[i],2),  ni!==null?fmt(d.puttNoGIR[ni],2):null,  'avg/non-GIR hole', true)
+        +kpi('Total Putts',     fmt(d.putts[i],1),       ni!==null?fmt(d.putts[ni],1):null,      'per round',        true)
+        +'</div>';
+      html+=benchTable([['Putts GIR','puttGIR'],['Putts non-GIR','puttNoGIR'],['Total Putts','putts']]);
+      html+=puttBandsHtml(d,i,labels);
+      var coBand=crossoverBand(d,i);
+      var nextCo=ni!==null?crossoverBand(d,ni):null;
+      var nextMsg4=nextCo?'The <span class="next-grp">'+nextLbl+'</span> group crossover is <strong>'+nextCo+'</strong>.':'';
+      html+=insightBox('The <strong>'+lbl+'</strong> group averages <strong>'+fmt(d.putts[i],1)+' putts per round</strong>. 3-putts start to outnumber makes at <strong>'+coBand+'</strong>. '+nextMsg4+' Moving that crossover further out is the fastest putting improvement available.');
+      html+=puttHeatMap(d,i,labels);
+    } else {
+      html+=crossoverChartSVG(d,i,labels);
+      var coBand2=crossoverBand(d,i);
+      var ni2=nextIdx(i), nextCo2=ni2!==null?crossoverBand(d,ni2):null;
+      var nextMsg5=nextCo2?'The <span class="next-grp">'+labels[ni2]+'</span> group crossover is at <strong>'+nextCo2+'</strong>.':'';
+      html+=insightBox('For <strong>'+lbl+'</strong>, 3-putts outnumber makes from <strong>'+coBand2+'</strong>. '+nextMsg5+' The AS Tour average crossover is around 25–40ft — every group that improves lag putting pushes that point further out and saves real shots.');
+    }
+  }
+  document.getElementById('mainContent').innerHTML=html;
+}
+
+populateGroups();
+updateAll();
+</script>
+</body>
+</html>
